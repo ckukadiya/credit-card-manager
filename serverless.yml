@@ -1,0 +1,79 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: paravaaani
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: cred-service
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: credit-card-manager
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-east-1
+  environment:
+    JWT_SECRET: 123
+    CREDIT_SERVICE_URL: https://qnq72qivta.execute-api.us-east-1.amazonaws.com/dev/login
+    CREDIT_SERVICE_USERNAME: user2
+    CREDIT_SERVICE_PASSWORD: password2
+
+functions:
+  login:
+    handler: handler.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+  getData:
+    handler: handler.getData
+    events:
+      - http:
+          path: data
+          method: get
+          cors: true
+          authorizer:
+            type: REQUEST
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+  getToken:
+    handler: handler.getToken
+    events:
+      - http:
+          path: get-token
+          method: get
+          cors: true
+          authorizer:
+            type: REQUEST
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  validateToken:
+    handler: handler.validateToken
+
+resources:
+  Resources:
+    LambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName:
+          Ref: ValidateTokenLambdaFunction
+        Principal: apigateway.amazonaws.com
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: MyApi
+        Description: "API with JWT authentication"
+
+    ApiGatewayAuthorizer:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: globalAuth
+        Type: REQUEST
+        IdentitySource: method.request.header.Authorization
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizerUri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ValidateTokenLambdaFunction.Arn}/invocations
+        AuthorizerResultTtlInSeconds: 0
