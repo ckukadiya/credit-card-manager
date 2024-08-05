@@ -23,7 +23,15 @@ functions:
       - http:
           path: login
           method: post
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - 'Content-Type'
+              - 'Authorization'
+            methods:
+              - GET
+              - POST
+              - OPTIONS
 
   getData:
     handler: handler.getData
@@ -42,7 +50,15 @@ functions:
       - http:
           path: get-token
           method: get
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - 'Content-Type'
+              - 'Authorization'
+            methods:
+              - GET
+              - POST
+              - OPTIONS
           authorizer:
             type: REQUEST
             authorizerId:

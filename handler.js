@@ -25,6 +25,11 @@ exports.login = async (event) => {
 
   return {
     statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "origin, content-type, accept",
+      "Access-Control-Allow-Methods": "POST, PUT, OPTIONS",
+    },
     body: JSON.stringify({ token }),
   };
 };
@@ -34,6 +39,11 @@ exports.getData = async (event) => {
 
   return {
     statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "origin, content-type, accept",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    },
     body: JSON.stringify({ data: "Protected data" }),
   };
 };
@@ -53,6 +63,11 @@ exports.getToken = async (event) => {
     console.log(response.data);
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "origin, content-type, accept",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      },
       body: JSON.stringify(response.data),
     };
   } catch (error) {
