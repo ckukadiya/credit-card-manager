@@ -16,6 +16,11 @@ exports.login = async (event) => {
   if (!user) {
     return {
       statusCode: 401,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "origin, content-type, accept",
+        "Access-Control-Allow-Methods": "POST, PUT, OPTIONS",
+      },
       body: JSON.stringify({ message: "Invalid credentials" }),
     };
   }
